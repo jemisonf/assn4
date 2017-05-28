@@ -4,6 +4,8 @@
 #include "event.h"
 #include <iostream>
 #include <exception>
+#include <string>
+#include <stdlib.h>
 
 class Location {
      	private:
@@ -26,6 +28,14 @@ class Location {
 		void setup_location();
 
 		void print_board();
+		
+		int is_valid_move(int);
+		int get_move();
+		void move_player();
+
+
+		static int get_valid_int(int=-1);
+		static int is_valid_int(std::string, int=-1);
 };
 
 #endif
