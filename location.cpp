@@ -71,6 +71,14 @@ void Location::clear_mem() {
 	player_position = NULL;
 	size = 0;
 }
+
+int Location::get_player_pos_0() const {
+	return player_position[0];
+}
+
+int Location::get_player_post_1() const {
+	return player_position[1];
+}
 /*
 template <typename T>
 void Location::get_copy_of_event(T const &event, Event** destination) {
@@ -186,4 +194,8 @@ int Location::is_valid_int(string str, int max) {
 	}
 	if (max != -1 && atoi(str.c_str()) > max) return 0;
 	return 1;
+}
+
+void Location::set_location_on_board(Event& e, int i, int j) {
+	board[i][j] = e.clone();	
 }

@@ -23,6 +23,10 @@ class Location {
 		Event *get_event(int, int) const;
 		int* get_player_position() const;	
 		int get_size() const;
+		int get_player_pos_0() const;
+		int get_player_post_1() const;
+
+		void set_location_on_board(Event&, int, int);
 		void get_preceps();
 		void run_player_event(Player&);
 		void setup_location();

@@ -1,7 +1,10 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#include "player.h"
+#include <iostream>
+#include <stdlib.h>
+
+class Player;
 
 class Event {
 	public:
