@@ -2,10 +2,17 @@
 #define LOCATION_H
 
 #include "event.h"
+#include "player.h"
+#include "rock.h"
+#include "flying.h"
+#include "psychic.h"
+#include "pokestop.h"
+#include "cave.h"
 #include <iostream>
 #include <exception>
 #include <string>
 #include <stdlib.h>
+#include <vector>
 
 class Location {
      	private:
@@ -26,6 +33,8 @@ class Location {
 		int get_player_pos_0() const;
 		int get_player_post_1() const;
 
+		void setup_board(int);
+
 		void set_location_on_board(Event&, int, int);
 		void get_preceps();
 		void run_player_event(Player&);
@@ -36,7 +45,11 @@ class Location {
 		int is_valid_move(int);
 		int get_move();
 		void move_player();
-
+		
+		void run_event(Player &);
+		void flee_pokemon(int, int); // coords of pokemon
+		
+		int player_has_won(Player &);
 
 		static int get_valid_int(int=-1);
 		static int is_valid_int(std::string, int=-1);

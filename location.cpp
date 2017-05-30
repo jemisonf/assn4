@@ -9,6 +9,7 @@ using namespace std;
 Location::Location() {
 	board = NULL;
 	player_position = NULL;
+	size = 0;
 }
 
 Location::Location(int size) {
@@ -61,15 +62,67 @@ Location::~Location() {
 void Location::clear_mem() {
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
-			delete [] board[i][j];
+			if (board[i][j]) delete [] board[i][j];
 		}
-		delete [] board[i];
+		if (board[i]) delete [] board[i];
 	}
-	delete [] board;
+	if (board) delete [] board;
 	board = NULL;
-	delete [] player_position;
+	if (player_position) delete [] player_position;
 	player_position = NULL;
 	size = 0;
+}
+
+void Location::setup_board(int new_size) {
+     	int a, b;
+	clear_mem();
+	size = new_size;
+	board = new Event**[size];
+	for (int i = 0; i < size; i++) {
+		board[i] = new Event*[size];
+		for (int j = 0; j < size; j++) {
+			board[i][j] = NULL;
+		}
+	}
+	player_position = new int[2];
+	player_position[0] = 0;
+	player_position[1] = 0;
+/*	vector<int> vi, vj, vi_rand, vj_rand;
+	int num_i, num_j;
+	for (int i = 0; i < size; i++) {
+		vi.push_back(i);
+		vj.push_back(i);
+	}
+	for (int i = 0; i < size; i++) {
+	     	num_i = rand() % vi.size();
+		num_j = rand() % vi.size();
+		vi_rand.push_back(vi[num_i]);
+		vi.erase(vi.begin() + num_i);
+		vj_rand.push_back(vi[num_j]);
+		vj.erase(vj.begin() + num_j);
+	}*/
+	vector<Event*> event_vect;
+	for (int i = 0; i < 2; i++) {
+		event_vect.push_back(new Rock(0));
+		event_vect.push_back(new Rock(1));
+		event_vect.push_back(new Flying(2));
+		event_vect.push_back(new Flying(3));
+		event_vect.push_back(new Psychic(4));
+		event_vect.push_back(new Psychic(5));
+		event_vect.push_back(new Pokestop);
+		event_vect.push_back(new Cave);
+	}
+	for (int i = 0; i < 4; i++) event_vect.push_back(new Cave);	
+       	for (int i = 0; i < 20; i++) {
+	//	board[vi_rand.at(i)][vj_rand.at(i)] = event_vect[i];
+	//	cout << vi_rand[i] << " " << vj_rand[i] << endl;
+		do {
+			a = rand() % size;
+			b = rand() % size;
+		} while (board[a][b] && (a + b != 0));
+		board[a][b] = event_vect.at(i)->clone();
+		delete [] event_vect.at(i);
+	}	
 }
 
 int Location::get_player_pos_0() const {
@@ -79,6 +132,7 @@ int Location::get_player_pos_0() const {
 int Location::get_player_post_1() const {
 	return player_position[1];
 }
+
 /*
 template <typename T>
 void Location::get_copy_of_event(T const &event, Event** destination) {
@@ -103,9 +157,16 @@ void Location::print_board() {
 	for (int i = 0; i < size; i++) {
 		cout << "|"; // print left border bar
 		for (int j = 0; j < size; j++) {
-			if (i == player_position[0] && j == player_position[1]) {
+			if ((i == player_position[0] && j == player_position[1])) {
 				cout << "P";
-			} else {
+			} else if (board[i][j]) {
+			     	#ifdef DEBUG
+			 	cout << "*";
+			    	#endif
+				#ifndef DEBUG
+				cout << " ";
+				#endif	
+			}else {
 				cout << " ";
 			}
 			cout << "|";
@@ -198,4 +259,59 @@ int Location::is_valid_int(string str, int max) {
 
 void Location::set_location_on_board(Event& e, int i, int j) {
 	board[i][j] = e.clone();	
+}
+
+void Location::get_preceps() {
+	for (int i = player_position[0] - 1; i <= player_position[0] + 1; i++) {
+		for (int j = player_position[1] - 1; j <= player_position[1] + 1; j++) {
+			if (i >= 0 && i < size && j >= 0 && j < size && board[i][j]) {
+			     	board[i][j]->get_precep();
+			}
+		}
+	}	     
+}
+
+void Location::run_event(Player &p) {
+	if (board[player_position[0]][player_position[1]]) {
+		if (board[player_position[0]][player_position[1]]->run_event(p)) {
+			delete [] board[player_position[0]][player_position[1]];
+			board[player_position[0]][player_position[1]] = NULL;
+		} else {
+			flee_pokemon(player_position[0], player_position[1]);
+		}	     
+	}
+}
+
+void Location::flee_pokemon(int index_i, int index_j) {
+     	cout << "The pokemon flees!" << endl;
+	vector<int> vi, vj, vi_rand, vj_rand;
+	int num_i, num_j;
+	for (int i = 0; i < size; i++) {
+		vi.push_back(i);
+		vj.push_back(i);
+	}
+	for (int i = 0; i < size; i++) {
+	     	num_i = rand() % vi.size();
+		num_j = rand() % vi.size();
+		vi_rand.push_back(vi[num_i]);
+		vi.erase(vi.begin() + num_i);
+		vj_rand.push_back(vi[num_j]);
+		vj.erase(vj.begin() + num_j);
+	}
+	for (int i = 0; i < size; i++) {
+		if (!board[vi_rand.at(i)][vj_rand.at(i)]) {
+			board[vi_rand.at(i)][vj_rand.at(i)] = board[index_i][index_j]->clone();
+			delete [] board[index_i][index_j];
+			board[index_i][index_j] = NULL;
+			break;
+		}
+	}
+}
+
+int Location::player_has_won(Player &p) {
+	if (player_position[0] == 0 && player_position[1] == 0 && p.has_all_lvl2_pokemon()) {
+		return 1;
+	} else {
+		return 0;
+	}
 }

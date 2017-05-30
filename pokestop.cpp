@@ -14,8 +14,10 @@ void Pokestop::set_pokeballs(const int num) {
 	num_pokeballs = num;
 }
 
-void Pokestop::run_event(Player& p) {
-	
+int Pokestop::run_event(Player& p) {
+     	cout << "The pokestop gives you " << num_pokeballs << " pokeballs!" << endl;
+	p.add_pokeballs(num_pokeballs);	
+	return 1;
 }
 
 void Pokestop::get_precep() {

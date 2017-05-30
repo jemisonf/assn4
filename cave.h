@@ -9,7 +9,7 @@ class Cave: public Event {
 		int num_stones;
 	public:
 		Cave();
-		void run_event(Player &);
+		int run_event(Player &);
 		void get_precep();
 		Event * clone();
 };

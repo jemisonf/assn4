@@ -12,7 +12,7 @@ class Pokestop: public Event {
 		int get_pokeballs();
 		void set_pokeballs(const int);
 		Event* clone();
-		void run_event(Player&);
+		int run_event(Player&);
 		void get_precep();
 };
 
