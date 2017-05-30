@@ -3,3 +3,6 @@
 *.swp
 game
 .gitignore
+debug
+test/*
+log
